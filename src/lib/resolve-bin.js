@@ -1,5 +1,5 @@
 import resolveFrom from "resolve-from"
 
 export default function resolveBin(name) {
-  return resolveFrom(`.bin/${name}`, import.meta.url)
+  return resolveFrom(`.bin/${name}`, __dirname)
 }
