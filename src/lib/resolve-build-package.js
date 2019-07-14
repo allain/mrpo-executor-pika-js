@@ -1,5 +1,3 @@
-import resolveFrom from "resolve-from"
-
 export default function resolveBuildPackage(id) {
-  return resolveFrom(id, __dirname)
+  return require.resolve(id, { paths: [__dirname] })
 }

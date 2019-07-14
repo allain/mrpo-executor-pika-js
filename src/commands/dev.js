@@ -18,6 +18,8 @@ export default {
   buildingProcess: null,
 
   async start(config) {
+    const self = this
+
     debug("generating build source")
     const buildPath = await buildProject(config)
     const distPath = path.resolve(config.cwd, "dist")
@@ -29,6 +31,17 @@ export default {
     console.log("detected dependencies", collector.dependencies)
     const watcher = chokidar.watch(path.resolve(config.cwd, "src"))
     console.log("performing initial build")
+
+    const build = async () => {
+      const execution = (this.buildProcess = runPikaBuild(buildPath, distPath))
+
+      execution.on("exit", () => {
+        this.buildingProcess = null
+      })
+
+      await execution
+    }
+
     await build()
 
     console.log("listening for changes")
@@ -45,16 +58,6 @@ export default {
       }
       build()
     })
-
-    async function build() {
-      const execution = (this.buildProcess = runPikaBuild(buildPath, distPath))
-
-      execution.on("exit", () => {
-        this.buildingProcess = null
-      })
-
-      await execution
-    }
 
     await new Promise(resolve => (this.stopper = resolve))
 

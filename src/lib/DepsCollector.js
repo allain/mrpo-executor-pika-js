@@ -1,7 +1,6 @@
 import path from "path"
 import fs from "fs-extra"
 import precinct from "precinct"
-import resolveFrom from "resolve-from"
 
 /**
  *
@@ -35,7 +34,7 @@ export default class DepsCollector {
         (newDeps, dep) => {
           if (dep.match(/^[./]/)) {
             // dep is to a path
-            const depPath = resolveFrom(dep, path.dirname(srcFile))
+            const depPath = path.resolve(path.dirname(srcFile), dep)
             newDeps.internal.add(depPath)
           } else {
             if (dep[0] === "@") {
@@ -65,6 +64,7 @@ export default class DepsCollector {
           changed = true
         }
       } else {
+        changed = true
         for (const internal of fileDeps.internal) {
           srcFiles.push(internal)
         }
