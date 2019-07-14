@@ -1,6 +1,7 @@
-const path = require("path")
-const fs = require("fs-extra")
-const precinct = require("precinct")
+import path from "path"
+import fs from "fs-extra"
+import precinct from "precinct"
+import resolveFrom from "resolve-from"
 
 /**
  *
@@ -15,7 +16,7 @@ function sameSet(a, b) {
   return true
 }
 
-class DepsCollector {
+export default class DepsCollector {
   constructor() {
     this.externals = new Set()
     this.depsMap = {}
@@ -34,9 +35,7 @@ class DepsCollector {
         (newDeps, dep) => {
           if (dep.match(/^[./]/)) {
             // dep is to a path
-            const depPath = require.resolve(dep, {
-              paths: [path.dirname(srcFile)]
-            })
+            const depPath = resolveFrom(dep, path.dirname(srcFile))
             newDeps.internal.add(depPath)
           } else {
             if (dep[0] === "@") {
@@ -86,5 +85,3 @@ class DepsCollector {
     return [...externals].sort()
   }
 }
-
-module.exports = DepsCollector

@@ -1,8 +1,8 @@
-const execa = require("execa")
-const fs = require("fs-extra")
-const path = require("path")
+import execa from "execa"
+import fs from "fs-extra"
+import path from "path"
 
-const resolveBin = require("../lib/resolve-bin")
+import resolveBin from "../lib/resolve-bin"
 
 const packBin = resolveBin("pack")
 /**
@@ -11,7 +11,7 @@ const packBin = resolveBin("pack")
  * @param {string} distPath
  * @returns {import('execa').ExecaChildProcess}
  */
-function runPikaBuild(buildPath, distPath) {
+export default function runPikaBuild(buildPath, distPath) {
   const execution = execa(packBin, ["build", "--cwd", buildPath])
   execution.stdout.pipe(process.stdout)
   execution.stderr.pipe(process.stderr)
@@ -23,5 +23,3 @@ function runPikaBuild(buildPath, distPath) {
 
   return execution
 }
-
-module.exports = runPikaBuild

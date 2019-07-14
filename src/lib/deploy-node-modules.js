@@ -1,9 +1,10 @@
-const path = require("path")
-const fs = require("fs-extra")
-const execa = require("execa")
-const debug = require("debug")("mrpo:javascript-pika-executor")
+import path from "path"
+import fs from "fs-extra"
+import execa from "execa"
+import Debug from "debug"
+const debug = Debug("mrpo:javascript-pika-executor")
 
-async function deployNodeModules(buildPath, config) {
+export default async function deployNodeModules(buildPath, config) {
   debug("installing node modules")
   const installing = execa("npm", ["install", "--save"], { cwd: buildPath })
   installing.stdout.pipe(process.stdout)
@@ -19,5 +20,3 @@ async function deployNodeModules(buildPath, config) {
     path.resolve(config.cwd, "node_modules")
   )
 }
-
-module.exports = deployNodeModules

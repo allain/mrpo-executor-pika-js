@@ -1,12 +1,14 @@
-const execa = require("execa")
-const fs = require("fs-extra")
-const path = require("path")
-const debug = require("debug")("mrpo:javacsript-pika-executor")
-const runPikaBuild = require("../lib/run-pika-build")
-const buildProject = require("../lib/build-project")
-const deployNodeModules = require("../lib/deploy-node-modules")
+import execa from "execa"
+import fs from "fs-extra"
+import path from "path"
+import Debug from "debug"
+import runPikaBuild from "../lib/run-pika-build"
+import buildProject from "../lib/build-project"
+import deployNodeModules from "../lib/deploy-node-modules"
 
-module.exports = {
+const debug = Debug("mrpo:executor-pika-js")
+
+export default {
   /** @type {import('execa').ExecaChildPromise} */
   execution: null,
   async start(config) {

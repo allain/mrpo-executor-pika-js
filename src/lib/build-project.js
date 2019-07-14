@@ -1,16 +1,17 @@
-const os = require("os")
-const fs = require("fs-extra")
-const path = require("path")
-const resolveBuildPackage = require("./resolve-build-package")
-const extractExtenalDeps = require("./extract-external-deps")
-const execa = require("execa")
-const debug = require("debug")("mrpo:js-pika")
+import os from "os"
+import fs from "fs-extra"
+import path from "path"
+import Debug from "debug"
+import resolveBuildPackage from "./resolve-build-package"
+import extractExtenalDeps from "./extract-external-deps"
+
+const debug = Debug("mrpo:js-pika")
 
 const randomInt = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 const generateBuildPath = name =>
   path.resolve(os.tmpdir(), `${name}-${Date.now()}-${randomInt()}`)
 
-module.exports = async function buildProject(
+export default async function buildProject(
   config,
   buildPath = generateBuildPath(config.name)
 ) {

@@ -1,16 +1,17 @@
-const execa = require("execa")
-const fs = require("fs-extra")
-const path = require("path")
-const debug = require("debug")("mrpo:javacsript-pika-executor")
-const chokidar = require("chokidar")
+import execa from "execa"
+import fs from "fs-extra"
+import path from "path"
+import Debug from "debug"
+import chokidar from "chokidar"
 
-const buildProject = require("../lib/build-project")
-const resolveBin = require("../lib/resolve-bin")
-const runPikaBuild = require("../lib/run-pika-build")
-const DepsCollector = require("../lib/DepsCollector")
-const deployNodeModules = require("../lib/deploy-node-modules")
+import buildProject from "../lib/build-project"
+import runPikaBuild from "../lib/run-pika-build"
+import DepsCollector from "../lib/DepsCollector"
+import deployNodeModules from "../lib/deploy-node-modules"
 
-module.exports = {
+const debug = Debug("mrpo:javacsript-pika-executor")
+
+export default {
   stopper: null,
 
   /** @type {import('execa').ExecaChildPromise} */
