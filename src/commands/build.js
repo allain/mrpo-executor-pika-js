@@ -4,7 +4,7 @@ import path from "path"
 import Debug from "debug"
 import runPikaBuild from "../lib/run-pika-build"
 import buildProject from "../lib/build-project"
-import deployNodeModules from "../lib/deploy-node-modules"
+import installNodeModules from "../lib/install-node-modules"
 
 const debug = Debug("mrpo:executor-pika-js")
 
@@ -17,7 +17,7 @@ export default {
     debug("generated at %s", buildPath)
 
     debug("deploying node_modules")
-    await deployNodeModules(buildPath, config)
+    await installNodeModules(buildPath, config)
     debug("done")
 
     const execution = runPikaBuild(buildPath, path.resolve(config.cwd, "dist"))

@@ -7,7 +7,7 @@ import chokidar from "chokidar"
 import buildProject from "../lib/build-project"
 import runPikaBuild from "../lib/run-pika-build"
 import DepsCollector from "../lib/DepsCollector"
-import deployNodeModules from "../lib/deploy-node-modules"
+import installNodeModules from "../lib/install-node-modules"
 
 const debug = Debug("mrpo:javacsript-pika-executor")
 
@@ -37,10 +37,7 @@ export default {
       if (await collector.updateFile(changedPath)) {
         console.log("new external deps")
         const buildPath = await buildProject(config)
-
-        debug("deploying node_modules")
-        await deployNodeModules(buildPath, config)
-        debug("done")
+        await installNodeModules(buildPath, config)
       }
 
       if (this.buildingProcess) {
