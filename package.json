@@ -1,5 +1,5 @@
 {
-  "name": "@mrpo/executor-pika-js",
+  "name": "mrpo-executor-pika-js",
   "version": "0.1.0",
   "description": "A mrpo executor that uses pika under the hood.",
   "main": "src/index.js",
