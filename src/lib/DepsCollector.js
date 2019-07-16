@@ -84,4 +84,10 @@ export default class DepsCollector {
 
     return [...externals].sort()
   }
+
+  static async collectFrom(entryPath) {
+    const collector = new DepsCollector()
+    await collector.updateFile(entryPath)
+    return collector.dependencies
+  }
 }

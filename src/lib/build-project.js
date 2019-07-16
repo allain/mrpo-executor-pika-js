@@ -1,29 +1,47 @@
 import os from "os"
 import fs from "fs-extra"
+import { writeJsonFile, loadJsonFile } from "./fs-utils"
 import path from "path"
 import Debug from "debug"
 import resolveBuildPackage from "./resolve-build-package"
-import extractExtenalDeps from "./extract-external-deps"
+import DepsCollector from "./DepsCollector"
 
 const debug = Debug("mrpo:js-pika")
 
 const randomInt = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
-const generateBuildPath = name =>
-  path.resolve(os.tmpdir(), `${name}-${Date.now()}-${randomInt()}`)
+const generateBuildPath = () =>
+  path.resolve(os.tmpdir(), `mrpo-pika-js-${Date.now()}-${randomInt()}`)
 
 export default async function buildProject(
   config,
-  buildPath = generateBuildPath(config.name)
+  buildPath = generateBuildPath()
 ) {
+  const targetPackageJsonPath = path.resolve(config.cwd, "package.json")
+  if (!(await fs.pathExists(targetPackageJsonPath))) {
+    throw new Error(`package.json not found in project`)
+  }
+
+  if (!(await fs.pathExists(path.resolve(config.cwd, "src")))) {
+    throw new Error("src directory not found in project")
+  }
+
+  if (!(await fs.pathExists(path.resolve(config.cwd, "src", "index.js")))) {
+    throw new Error("src/index.js not found in project")
+  }
+
   await fs.ensureDir(buildPath)
+
+  const srcPkg = await loadJsonFile(targetPackageJsonPath)
+
   const packageJsonPath = path.resolve(buildPath, "package.json")
 
-  const entryPath = path.resolve(config.cwd, "src", "index.js")
+  const entryPath = srcPkg.main
+    ? path.resolve(config.cwd, srcPkg.main)
+    : path.resolve(config.cwd, "src", "index.js")
 
   const packageJson = {
-    name: config.name,
-    version: config.version,
-    main: path.resolve(buildPath, "src", "index.js"),
+    ...srcPkg,
+    main: entryPath,
     "@pika/pack": {
       pipeline: [
         [
@@ -32,23 +50,8 @@ export default async function buildProject(
         ],
         [resolveBuildPackage("@pika/plugin-build-node")],
         [resolveBuildPackage("@pika/plugin-build-web")]
-        // [resolveBuildPackage("@pika/plugin-build-types")]
       ]
     }
-  }
-
-  debug("extracting external dependencies")
-  const dependencies = await extractExtenalDeps(entryPath)
-
-  debug("extracted external deps", dependencies)
-  if (dependencies.length) {
-    packageJson.dependencies = dependencies.reduce(
-      (deps, dep) => ({
-        ...deps,
-        [dep]: (config.dependencies && config.dependencies[dep]) || "*"
-      }),
-      {}
-    )
   }
 
   await fs.ensureSymlink(
@@ -56,7 +59,7 @@ export default async function buildProject(
     path.resolve(buildPath, "src")
   )
 
-  await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2))
+  await writeJsonFile(packageJsonPath, packageJson)
 
   return buildPath
 }

@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "pack build",
-    "test": "npm run build && jest",
+    "test": "pack build --silent && jest",
     "version": "npm run build"
   },
   "author": "Allain Lalonde <allain.lalonde@gmail.com>",
@@ -18,8 +18,7 @@
     "chokidar": "^3.0.2",
     "execa": "^2.0.3",
     "fs-extra": "^8.1.0",
-    "precinct": "^6.1.2",
-    "resolve-from": "^5.0.0"
+    "precinct": "^6.1.2"
   },
   "@pika/pack": {
     "pipeline": [
